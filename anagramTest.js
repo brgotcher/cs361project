@@ -10,7 +10,8 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-axios.get('http://flip3.engr.oregonstate.edu:3480/search/hhiugyuhg').then((response) => {
+let str = "street"
+axios.get('http://flip3.engr.oregonstate.edu:3480/search/' + str).then((response) => {
     const html = response.data;
     console.log(html);
 }).catch((error) => {
