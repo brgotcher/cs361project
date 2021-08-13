@@ -11,6 +11,8 @@ guessAgain.textContent = "Guess again!";
 title = document.getElementById("title");
 gameWon = false;
 console.log("end of assignment block");
+word = "";
+hint = "";
 
 function start() {
     console.log("start() function started");
@@ -55,7 +57,8 @@ function play() {
     animationstr = "reveal " + (startSpeed+10) + "s";
     obfuscator.style.animation = animationstr;
     anagram = document.createElement("p");
-    anagram.innerHTML = "Anagram hint: help a ten"
+    hint = getHint(word);
+    anagram.innerHTML = "Anagram hint: " + hint;
     anagram.style.textAlign = "center";
     bottomDiv.appendChild(anagram);
     guess = document.createElement("input")
@@ -136,9 +139,39 @@ function getImage() {
     request.open("GET", "https://cs361projectapi.herokuapp.com", false);
     request.send(null);
     response = JSON.parse(request.responseText);
-    key = Object.keys(response)[0];
-    value = response[key];
+    word = Object.keys(response)[0].toLowerCase();
+    value = response[word];
     img.src = value
     imgDiv.appendChild(img);
     game.appendChild(imgDiv);
+}
+
+function getHint(word) {
+    // send the word in a get request to the anagram microservice
+    let req = new XMLHttpRequest();
+    req.open("GET", "http://flip3.engr.oregonstate.edu:3480/search/" + word, false);
+    req.send(null);
+    out = req.responseText;
+    console.log(out);
+    console.log(word);
+    // if the anagram service does not find an anagram, just scramble the letters
+    if (out.length != word.length || out == word) {
+        out = scramble(out);
+    }
+    return out;
+}
+
+function scramble(str) {
+    console.log("Pre scramble: " + str);
+    arr = str.split('');
+    len = arr.length;
+    for (i = 0; i < str.length-1; i++) {
+        j = Math.floor(Math.random() * len);
+        temp = arr[i];
+        arr[i] = arr[j]
+        arr[j] = temp; 
+    }
+    str = arr.join('');
+    console.log("Post scramble: " + str);
+    return str;
 }
