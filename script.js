@@ -9,10 +9,9 @@ game = document.getElementById("game");
 guessAgain = document.createElement("p")
 guessAgain.textContent = "Guess again!";
 title = document.getElementById("title");
+answer = "";
 gameWon = false;
 console.log("end of assignment block");
-word = "";
-hint = "";
 
 function start() {
     console.log("start() function started");
@@ -43,24 +42,25 @@ function play() {
     quitButton.textContent = "Quit";
     quitButton.onclick = function() {location.reload();}
     rightDiv.appendChild(quitButton);
-    getImage();
+    //getImage();
 //    imgDiv = document.createElement("div");
 //    imgDiv.id = "imgDiv";
 //    img = document.createElement("img");
 //    img.src = "https://images.theconversation.com/files/230552/original/file-20180803-41366-8x4waf.JPG?ixlib=rb-1.1.0&q=45&auto=format&w=926&fit=clip";
 //    imgDiv.appendChild(img);
 //    game.appendChild(imgDiv);
+    callApis();
     obfuscator = document.createElement("div");
     obfuscator.id = "obfuscator";
     game.appendChild(obfuscator);
     game.position = "relative";
     animationstr = "reveal " + (startSpeed+10) + "s";
     obfuscator.style.animation = animationstr;
-    anagram = document.createElement("p");
-    hint = getHint(word);
-    anagram.innerHTML = "Anagram hint: " + hint;
-    anagram.style.textAlign = "center";
-    bottomDiv.appendChild(anagram);
+    //anagram = document.createElement("p");
+    //hint = getHint(word);
+    //anagram.innerHTML = "Anagram hint: " + hint;
+    //anagram.style.textAlign = "center";
+    //bottomDiv.appendChild(anagram);
     guess = document.createElement("input")
     guess.setAttribute("type", "text");
     bottomDiv.appendChild(guess);
@@ -87,7 +87,7 @@ function checkSpeed() {
 function runTimer() {
     speed = startSpeed;
     setInterval(function() {
-        if (speed > 0) {
+        if (speed > 0 && !gameWon) {
             speed = speed - 1;
             timer.innerHTML = "Time remaining: " + speed;
         }
@@ -104,7 +104,7 @@ function runTimer() {
 
 function checkAnswer() {
     textInput = guess.value;
-    if (textInput.toLowerCase() == "elephant") {
+    if (textInput.toLowerCase() == answer.toLowerCase()) {
         time = speed;
         gameWon = true;
         winGame();
@@ -131,35 +131,66 @@ function loseGame() {
     game.appendChild(tryAgain);
 }
 
-function getImage() {
-    imgDiv = document.createElement("div");
-    imgDiv.id = "imgDiv";
-    img = document.createElement("img");
-    let request = new XMLHttpRequest();
-    request.open("GET", "https://cs361projectapi.herokuapp.com", false);
-    request.send(null);
-    response = JSON.parse(request.responseText);
-    word = Object.keys(response)[0].toLowerCase();
-    value = response[word];
-    img.src = value
-    imgDiv.appendChild(img);
-    game.appendChild(imgDiv);
+function callApis() {
+    var word = ""
+    var imageurl = "";
+    anagramURL = "";
+    hint = "";
+    const getImage = async () => {
+        const request = await fetch("http://cs361projectapi.herokuapp.com/");
+        const data = await request.json();
+        return data;
+    };
+
+    const getAnagram = async (url) => {
+        const request = await fetch(url);
+        const data = await request.text();
+        return data;
+    };
+
+    getImage().then(imageData => {
+        word = Object.keys(imageData)[0];
+        imageurl = imageData[word];
+        answer = word.toLowerCase();
+        anagramURL = "http://flip3.engr.oregonstate.edu:3480/search/" + word;
+
+        getAnagram(anagramURL).then(anagram => {
+            hint = anagram;
+            console.log("hint: ", hint);
+        })
+        if (hint == word || hint.length != word.length) {
+            hint = scramble(word);
+        }
+        imgDiv = document.createElement("div");
+        imgDiv.id = "imgDiv";
+        img = document.createElement("img");
+        img.src = imageurl;
+        imgDiv.appendChild(img);
+        game.appendChild(imgDiv);
+        hintline = document.createElement("p");
+        hintline.textContent = "Anagram hint: " + hint;
+        hintline.style.textAlign = "center";
+        bottomDiv.appendChild(hintline);
+        console.log("image url: ", imageurl);
+        console.log("word", word);
+    })
+    
 }
 
-function getHint(word) {
-    // send the word in a get request to the anagram microservice
-    let req = new XMLHttpRequest();
-    req.open("GET", "http://flip3.engr.oregonstate.edu:3480/search/" + word, false);
-    req.send(null);
-    out = req.responseText;
-    console.log(out);
-    console.log(word);
-    // if the anagram service does not find an anagram, just scramble the letters
-    if (out.length != word.length || out == word) {
-        out = scramble(out);
-    }
-    return out;
-}
+// function getHint(word) {
+//     // send the word in a get request to the anagram microservice
+//     let req = new XMLHttpRequest();
+//     req.open("GET", "http://flip3.engr.oregonstate.edu:3480/search/" + word, false);
+//     req.send(null);
+//     out = req.responseText;
+//     console.log(out);
+//     console.log(word);
+//     // if the anagram service does not find an anagram, just scramble the letters
+//     if (out.length != word.length || out == word) {
+//         out = scramble(out);
+//     }
+//     return out;
+// }
 
 function scramble(str) {
     console.log("Pre scramble: " + str);
