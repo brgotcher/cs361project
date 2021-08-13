@@ -4,6 +4,14 @@ h1 {
         margin-bottom: 5em;
 }
 
+/*
+#test{
+        background-color: black;
+        width: 50vw;
+        height: 37vw;
+}
+*/
+
 p {
         font-size: large;
         line-height: 1.6;
@@ -21,7 +29,9 @@ p {
 }
 
 #game {
-        flex-basis: 40%;
+        /*flex-basis: 40%;*/
+        width: 40vw;
+        height: 30vw;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -86,3 +96,4 @@ input[type=text] {
 button {
         display: block;
         margin: 5px auto;
+}
