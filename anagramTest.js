@@ -7,11 +7,13 @@
 // phrase = document.getElementById("phrase");
 // phrase.textContent = response;
 
-const axois = require('axios');
+const axios = require('axios');
 const cheerio = require('cheerio');
 
-axois.get('http://flip3.engr.oregonstate.edu:3480/search/street').then(response => {
+axios.get('http://flip3.engr.oregonstate.edu:3480/search/street').then((response) => {
     const html = response.data;
-})
+    console.log(html);
+}).catch((error) => {
+    console.log(error);
+});
 
-console.log(html)
