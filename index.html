@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Game</title>
+</head>
+<body>
+        <h1 id="title">Welcome! Press Play to Begin!</h1>
+        <div id="container">
+                <div id="instructions">
+                        <p>How to play:
+                        </p>
+                        <p>An obfuscated image will appear along with an anagram of a word or phrase describing the picture.  As the picture is revealed, try to guess the word or phrase as quickly as you can!</p>
+
+                </div>
+                <div id="game">
+                        <button id="play">Play!</button>
+                </div>
+                <div id="speed">
+                        <p>Speed: At faster speeds, the picture is revealed more quickly.  At slower speeds, you have more time to guess.</p>
+                        <input type="radio" id="slow" name="speed" value="slow">
+                        <label for="slow">slow (25 seconds)</label>
+                        <br>
+                        <input type="radio" id="medium" name="speed" value="medium">
+                        <label for="medium">Medium (20 seconds) [default]</label>
+                        <br>
+                        <input type="radio" id="fast" name="speed" value="fast">
+                        <label for="fast">fast (15 seconds)</label>
+                </div>
+        </div>
+        <script src="script.js"></script>
+</body>
+</html>
