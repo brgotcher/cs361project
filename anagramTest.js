@@ -10,11 +10,15 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+let anagram = "";
+
 let str = "street"
 axios.get('http://flip3.engr.oregonstate.edu:3480/search/' + str).then((response) => {
-    const html = response.data;
+    anagram = response.data;
     console.log(html);
 }).catch((error) => {
     console.log(error);
 });
 
+phrase = document.getElementById("phrase");
+phrase.textContent = anagram;
