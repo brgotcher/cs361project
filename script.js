@@ -12,6 +12,8 @@ title = document.getElementById("title");
 answer = "";
 gameWon = false;
 console.log("end of assignment block");
+var interval;
+timeRunning = false;
 
 function start() {
     console.log("start() function started");
@@ -22,6 +24,7 @@ function start() {
 }
 
 function play() {
+    if (timeRunning) {clearInterval(interval);}
     rightDiv.innerHTML = "";
     game.innerHTML = "";
     bottomDiv.innerHTML = "";
@@ -85,20 +88,35 @@ function checkSpeed() {
 }
 
 function runTimer() {
+    timeRunning = true;
     speed = startSpeed;
-    setInterval(function() {
+    function time() {
         if (speed > 0 && !gameWon) {
             speed = speed - 1;
-            timer.innerHTML = "Time remaining: " + speed;
+            timer.innerHTML = "Time remaining: "+  speed;
         }
         else {
-            clearInterval();
+            clearInterval(interval);
             if (!gameWon) {
                 loseGame();
             }
-
         }
-    }, 1000);
+    }
+    // setInterval(function() {
+    //     if (speed > 0 && !gameWon) {
+    //         speed = speed - 1;
+    //         timer.innerHTML = "Time remaining: " + speed;
+    //     }
+    //     else {
+    //         clearInterval();
+    //         if (!gameWon) {
+    //             loseGame();
+    //         }
+
+    //     }
+    // }, 1000);
+    interval = setInterval(time, 1000);
+
 
 }
 
@@ -152,14 +170,14 @@ function callApis() {
         word = Object.keys(imageData)[0];
         imageurl = imageData[word];
         answer = word.toLowerCase();
-        anagramURL = "http://flip3.engr.oregonstate.edu:3480/search/" + word;
+        anagramURL = "http://flip3.engr.oregonstate.edu:3480/search/" + answer;
 
         getAnagram(anagramURL).then(anagram => {
             hint = anagram;
             console.log("hint: ", hint);
         })
-        if (hint == word || hint.length != word.length) {
-            hint = scramble(word);
+        if (hint == answer || hint.length != answer.length) {
+            hint = scramble(answer);
         }
         imgDiv = document.createElement("div");
         imgDiv.id = "imgDiv";
